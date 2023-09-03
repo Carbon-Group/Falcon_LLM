@@ -3,8 +3,8 @@ import nats
 import json
 
 async def run_model():
-    # Инициализируем NATS-клиент
-    nc = await nats.connect()
+    # Инициализируем NATS-клиент и подключаемся к локальному серверу на порту 4222
+    nc = await nats.connect(servers=["nats://localhost:4222"])
 
     # Создаем подписчика на NATS-сообщения
     async def message_handler(msg):
@@ -26,6 +26,10 @@ async def run_model():
 
     # Подписываемся на NATS-сообщения для обработки
     await nc.subscribe("text_generation_requests", cb=message_handler)
+
+    # Оставляем цикл асинхронной работы активным для ожидания новых сообщений
+    while True:
+        await asyncio.sleep(1)  # Можно задать другой интервал ожидания
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
