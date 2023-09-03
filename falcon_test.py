@@ -1,36 +1,32 @@
 import asyncio
 import nats
-import json
+from nats.errors import ConnectionClosedError
 
-async def run_model():
-    # Инициализируем NATS-клиент и подключаемся к локальному серверу на порту 4222
-    nc = await nats.connect(servers=["nats://localhost:4222"])
+async def main():
+    nc = await nats.connect("nats://localhost:4222")
 
-    # Создаем подписчика на NATS-сообщения
     async def message_handler(msg):
-        data = json.loads(msg.data.decode())
-        input_text = data.get("input_text", "")
-        num_return_sequences = data.get("num_return_sequences", 1)
+        subject = msg.subject
+        reply = msg.reply
+        data = msg.data.decode()
 
-        # Простой генератор случайных строк
-        import random
-        import string
+        print(f"Received a message on '{subject} {reply}': {data}")
 
-        def generate_random_string(length):
-            return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(length))
+        # Просто отправляем обратно полученное сообщение
+        await nc.publish(reply, data.encode())
 
-        generated_text = [generate_random_string(len(input_text)) for _ in range(num_return_sequences)]
+    # Подписываемся на запросы от пользователя
+    sub = await nc.subscribe("user_requests", cb=message_handler)
 
-        # Отправляем сгенерированный текст обратно по NATS
-        await nc.publish(msg.reply, json.dumps({"generated_text": generated_text}))
+    try:
+        while True:
+            await asyncio.sleep(1)
+    except KeyboardInterrupt:
+        pass
 
-    # Подписываемся на NATS-сообщения для обработки
-    await nc.subscribe("text_generation_requests", cb=message_handler)
+    # Отписываемся и завершаем соединение с NATS
+    await sub.unsubscribe()
+    await nc.drain()
 
-    # Оставляем цикл асинхронной работы активным для ожидания новых сообщений
-    while True:
-        await asyncio.sleep(1)  # Можно задать другой интервал ожидания
-
-if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(run_model())
+if __name__ == '__main__':
+    asyncio.run(main())
