@@ -14,6 +14,7 @@
 #### - Для клиента на JS: axios.
 #### - Для FastAPI: fastapi.
 #### - Для Falcon: asyncio, nats.
+#### Команда установки зависимости:
 ```
 python -m pip install -r requirements.txt
 ```
