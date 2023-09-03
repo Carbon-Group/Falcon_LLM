@@ -1,25 +1,34 @@
 const axios = require('axios');
 
-// Замените следующими значениями ваш токен авторизации и текст запроса
-const authToken = 'Ваш_токен_авторизации';
-const textRequest = 'Запрос_на_генерацию_текста';
+// URL вашего API сервера
+const apiUrl = 'http://localhost:8000/process_request/';
 
-// URL API сервера
-const apiUrl = 'https://localhost/generate_text'; // Замените на фактический URL вашего API сервера
+// Bearer токен для аутентификации
+const bearerToken = 'your_secret_token'; // Замените на ваш реальный токен
 
-// Объект с данными для запроса
-const requestData = {
-  authToken: authToken,
-  textRequest: textRequest,
-};
+// Функция для отправки запроса к API серверу
+async function sendRequest(prompt) {
+  try {
+    const response = await axios.post(
+      apiUrl,
+      { prompt },
+      {
+        headers: {
+          Authorization: `Bearer ${bearerToken}`,
+        },
+      }
+    );
 
-// Отправка POST-запроса
-axios.post(apiUrl, requestData)
-  .then(response => {
-    // Обработка ответа от сервера
-    console.log('Ответ от сервера:', response.data);
-  })
-  .catch(error => {
-    // Обработка ошибок
-    console.error('Произошла ошибка:', error);
-  });
+    if (response.status === 200) {
+      console.log('Response from API:', response.data.response);
+    } else {
+      console.error('API request failed:', response.statusText);
+    }
+  } catch (error) {
+    console.error('Error sending API request:', error.message);
+  }
+}
+
+// Пример использования
+const userPrompt = 'Translate: I love programming.'; // Замените на ваш запрос
+sendRequest(userPrompt);
