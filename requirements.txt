@@ -1,0 +1,6 @@
+asyncio
+nats
+fastapi
+uvicorn
+transformers
+torch
