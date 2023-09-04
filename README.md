@@ -57,6 +57,6 @@ For detailed API documentation and usage instructions, please refer to the [API 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-If you encounter any issues or have questions, please don't hesitate to [create an issue](https://github.com/your-repo/issues).
+If you encounter any issues or have questions, please don't hesitate to [create an issue](https://github.com/Carbon-Group/Falcon_LLM/issues).
 
 Thank you for using Falcon 40B LLM API!
