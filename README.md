@@ -40,9 +40,9 @@ To use this Falcon 40B LLM API locally, follow these steps:
    ```
 
 4. **Install Dependencies for JavaScript Client**:
-   - Install the Axios library for the JavaScript client by running:
+   - Install the Axios and dotenv library for the JavaScript client by running:
    ```
-   npm install axios
+   npm install
    ```
 
 5. **Run the JavaScript Client**:

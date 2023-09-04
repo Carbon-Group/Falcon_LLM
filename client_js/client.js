@@ -1,12 +1,13 @@
 const axios = require('axios');
+const dotenv = require('dotenv');
 
-// URL вашего API сервера
-const apiUrl = 'http://localhost:8000/process_request/';
+// Загрузите переменные окружения из файла .env
+dotenv.config();
 
-// Bearer токен для аутентификации
-const bearerToken = 'your_secret_token'; // Замените на ваш реальный токен
+// Чтение переменных окружения из .env
+const apiUrl = process.env.API_URL; // Замените на имя переменной из .env
+const bearerToken = process.env.SECRET_TOKEN; // Замените на имя переменной из .env
 
-// Функция для отправки запроса к API серверу
 async function sendRequest(prompt) {
   try {
     const response = await axios.post(
@@ -29,6 +30,5 @@ async function sendRequest(prompt) {
   }
 }
 
-// Пример использования
 const userPrompt = 'Translate: I love programming.'; // Замените на ваш запрос
 sendRequest(userPrompt);
