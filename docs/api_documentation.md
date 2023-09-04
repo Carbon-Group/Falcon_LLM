@@ -1,57 +1,60 @@
-# API Documentation
+# API Server Documentation
 
-This documentation provides an overview of the API endpoints, their usage, and authentication for the project.
+This document provides an overview of the API server for the Falcon 40B Instruct model.
 
 ## Table of Contents
+
+- [Overview](#overview)
 - [Authentication](#authentication)
 - [Endpoints](#endpoints)
   - [Process Request](#process-request)
 - [Example Usage](#example-usage)
+- [Testing](#testing)
+- [Environment Variables](#environment-variables)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Overview
+
+The API server is designed to interact with the Falcon 40B Instruct model, allowing users to send requests for text generation. It provides a secure and authenticated interface for communication.
 
 ## Authentication
 
-To access the API endpoints, you need to include a Bearer token in the request header. The token should be passed as an "Authorization" header in the format:
-
-```
-Authorization: Bearer your_secret_token
-```
-
-Replace `your_secret_token` with the actual token for authentication.
+The API server uses Bearer token authentication. To access the API, clients must include a valid token in the `Authorization` header of their requests.
 
 ## Endpoints
 
 ### Process Request
 
-**Endpoint**: `/process_request/`
+- **URL:** `/process_request/`
+- **Method:** POST
+- **Description:** This endpoint allows clients to send a request for text generation to the Falcon 40B Instruct model.
+- **Request Body:** JSON object with a `prompt` field containing the input text prompt.
+- **Request Headers:** Include the Bearer token in the `Authorization` header.
+- **Response:** The server responds with the generated text as a JSON object.
 
-**Method**: `POST`
+Example request:
+```json
+{
+  "prompt": "Translate: I love programming."
+}
+```
 
-This endpoint allows you to send a request for text generation using a pre-trained model.
-
-#### Request Body
-
-- `prompt` (string, required): The text prompt or input for text generation.
-
-#### Response
-
-- `response` (string): The generated text as a response to the provided prompt.
-
-**HTTP Status Codes:**
-
-- `200 OK`: Successful request with the generated response.
-- `400 Bad Request`: Invalid request format.
-- `401 Unauthorized`: Missing or invalid Bearer token.
-- `403 Forbidden`: Bearer token is invalid.
-- `500 Internal Server Error`: NATS error or other internal server issues.
+Example response:
+```json
+{
+  "response": "Generated text goes here."
+}
+```
 
 ## Example Usage
 
-Here is an example of how to use the API in JavaScript:
+Here is an example of how to use the API server with JavaScript:
 
 ```javascript
 const axios = require('axios');
 
-// URL of your API server
+// URL of the API server
 const apiUrl = 'http://localhost:8000/process_request/';
 
 // Bearer token for authentication
@@ -81,8 +84,28 @@ async function sendRequest(prompt) {
 }
 
 // Example usage
-const userPrompt = 'Translate: I love programming.'; // Replace with your request
+const userPrompt = 'Translate: I love programming.'; // Replace with your own prompt
 sendRequest(userPrompt);
 ```
 
-This documentation provides you with the necessary information to interact with the API, including authentication details and endpoint descriptions. Make sure to replace placeholders with actual values when making requests to the API.
+## Testing
+
+Testing of the API server is performed using the FastAPI TestClient. The provided tests ensure that authentication and endpoint functionality are working correctly. Tests can be found in the `tests/api_tests.py` file.
+
+## Environment Variables
+
+The API server relies on environment variables for configuration. These variables are defined in the `.env` file and loaded using the `python-decouple` library. Important variables include:
+
+- `API_HOST`: Host IP or domain of the API server.
+- `API_PORT`: Port on which the API server listens.
+- `SECRET_TOKEN`: Bearer token for authentication.
+- `NATS_URL`: URL of the NATS server for communication with the model service.
+- Other model-related variables.
+
+## Contributing
+
+Contributions to this project are welcome. Please refer to the [CONTRIBUTING.md](CONTRIBUTING.md) file for guidelines on how to contribute to the project.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).

@@ -1,59 +1,62 @@
-# Falcon_LLM
+# Falcon 40B Local Language Model (LLM) API
 
-## **Requirements**:
-- Linux
-- To use LLM with Falcon-40B, a GPU is required, as LLM demands high graphical performance. You will need at least 85-100 GB of RAM for fast execution of logical inference with Falcon 40B.
+Welcome to the Falcon 40B Local Language Model (LLM) API repository. This API allows you to interact with a powerful language model, Falcon 40B, locally on your machine. Falcon 40B is a high-performance model, so please ensure that your hardware meets the following requirements:
 
-### GPU:
-- 2x RTX 6000 Ada (not A6000 or RTX 6000)
-- 2x A6000 – a more budget-friendly option
+## System Requirements
+- GPU: 2x RTX 6000 Ada (not A6000 or RTX 6000) or equivalent for optimal performance.
+- CPU: 8 cores, for example, Intel Core i9-11900K or AMD Ryzen 9 5900X.
+- RAM: At least 85-100 GB of RAM for efficient processing.
 
-### CPU:
-- 8 cores.
-- For example, Intel Core i9-11900K or a similar AMD Ryzen 9 5900X.
+## Project Structure
+The project is organized as follows:
 
-### Libraries:
-- For the JS client: axios.
-- For FastAPI: fastapi.
-- For Falcon: asyncio, nats.
+- `api_server/main.py`: The FastAPI-based API server that serves as an interface to the Falcon 40B model. It handles incoming requests and communicates with the model via NATS.
+- `client_js/client.js`: A JavaScript client for interacting with the API server. It demonstrates how to send requests to the API server.
+- `model_service/main.py`: The component responsible for running the Falcon 40B model and handling requests sent via NATS.
+- `config/.env`: Configuration file for environment variables.
+- `config/config.py`: Configuration settings for the project.
+- `tests/api_tests.py`: Unit tests for the API server.
+- `tests/model_service_tests.py`: Unit tests for the model service.
 
-### Dependencies Installation:
-```bash
-python -m pip install -r requirements.txt
-```
+## Getting Started
+To use this Falcon 40B LLM API locally, follow these steps:
 
-## **Instructions for Using a Local Copy of the Falcon 40B Model**
+1. **Start NATS**:
+   - Run the following command to start the NATS server:
+   ```
+   docker run --network host -p 4222:4222 nats -js
+   ```
 
-### NATS
-- Enables reliable, fast, and flexible message exchange between the API server and Falcon 40B.
-- Command to start NATS:
-```bash
-docker run --network host -p 4222:4222 nats -js
-```
+2. **Start the Model Service**:
+   - Run the Falcon 40B model service by executing the following command:
+   ```
+   python model_service/main.py
+   ```
 
-### Falcon 40B
-- Command to start the model:
-```bash
-python falcon.py
-```
+3. **Start the API Server**:
+   - Run the API server with the following command:
+   ```
+   python api_server/main.py
+   ```
 
-### API Server
-- Command to start the server:
-```bash
-python api_server.py
-```
+4. **Install Dependencies for JavaScript Client**:
+   - Install the Axios library for the JavaScript client by running:
+   ```
+   npm install axios
+   ```
 
-### JS Client
-- Dependency installation:
-```bash
-npm install axios
-```
-- To check the connection, you can use the Node.js client:
-```bash
-node client.js
-```
+5. **Run the JavaScript Client**:
+   - Use the provided JavaScript client to test the connection to the API server. Modify the `client_js/client.js` file if needed.
+   ```
+   node client_js/client.js
+   ```
 
-### Developers:
-```bash
-https://github.com/Carbon-Group
-```
+## API Documentation
+For detailed API documentation and usage instructions, please refer to the [API documentation](docs/api_documentation.md).
+
+## License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+If you encounter any issues or have questions, please don't hesitate to [create an issue](https://github.com/your-repo/issues).
+
+Thank you for using Falcon 40B LLM API!

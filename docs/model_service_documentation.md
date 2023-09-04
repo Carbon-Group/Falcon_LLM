@@ -1,105 +1,61 @@
-# Falcon 40B Instruct Model Service Documentation
+# Model Service Documentation
 
-## Overview
+This documentation provides an overview of the Model Service, which is responsible for interacting with the Falcon 40B Instruct model and generating text responses based on user prompts.
 
-This documentation provides an overview of the Falcon 40B Instruct Model Service. The service utilizes the Falcon-40B Instruct model for text generation and communicates with clients over the NATS messaging system.
+## Introduction
 
-## Table of Contents
+The Model Service is an essential component of the system that handles user requests, communicates with the Falcon 40B Instruct model, and returns generated text responses. This service utilizes the NATS messaging system for communication and leverages the Hugging Face Transformers library for text generation.
 
-1. [Prerequisites](#prerequisites)
-2. [Getting Started](#getting-started)
-3. [Message Handling](#message-handling)
-4. [Model Configuration](#model-configuration)
-5. [API Endpoint](#api-endpoint)
-6. [Usage](#usage)
-7. [Shutting Down the Service](#shutting-down-the-service)
+## Configuration
 
-## Prerequisites
+The configuration for the Model Service can be found in the `config/config.py` file. It includes settings such as the NATS URL, model name, maximum generation length, and other parameters that affect the model's behavior.
 
-Before using the Falcon 40B Instruct Model Service, ensure you have the following prerequisites in place:
+### Example Configuration (`config/config.py`)
 
-- Python 3.6 or later
-- NATS messaging system (running on `localhost:4222`)
-
-## Getting Started
-
-To run the Falcon 40B Instruct Model Service, follow these steps:
-
-1. Install the required Python dependencies using `pip`:
-
-    ```bash
-    pip install transformers torch nats-py
-    ```
-
-2. Start the NATS messaging system on `localhost` with port `4222`.
-
-3. Run the `model_service/main.py` script:
-
-    ```bash
-    python model_service/main.py
-    ```
-
-## Message Handling
-
-The Falcon 40B Instruct Model Service subscribes to the "user_requests" subject on NATS and handles incoming requests from clients. When a message is received, it processes the request, generates a response using the model, and publishes the generated text as a reply.
-
-## Model Configuration
-
-The service uses the Falcon-40B Instruct model for text generation. The model and tokenizer are loaded using the Hugging Face Transformers library. The following configuration options are applied to the model:
-
-- Model: "tiiuae/falcon-40b-instruct"
-- Max sequence length: 200
-- Sampling method: Top-K sampling with K=10
-- Number of return sequences: 1
-- End-of-sequence token ID: Obtained from the tokenizer
-
-## API Endpoint
-
-The Falcon 40B Instruct Model Service does not expose a traditional REST API. Instead, it listens for incoming messages on the NATS subject "user_requests." Clients can send requests as messages, and the service replies with the generated text.
-
-## Usage
-
-To use the Falcon 40B Instruct Model Service, you can send requests as messages to the "user_requests" NATS subject. The service will process the request, generate a response, and publish the generated text as a reply.
-
-Example client usage (JavaScript):
-
-```javascript
-const axios = require('axios');
-
-// URL of your API server
-const apiUrl = 'http://localhost:8000/process_request/';
-
-// Bearer token for authentication
-const bearerToken = 'your_secret_token'; // Replace with your actual token
-
-// Function to send a request to the API server
-async function sendRequest(prompt) {
-  try {
-    const response = await axios.post(
-      apiUrl,
-      { prompt },
-      {
-        headers: {
-          Authorization: `Bearer ${bearerToken}`,
-        },
-      }
-    );
-
-    if (response.status === 200) {
-      console.log('Response from API:', response.data.response);
-    } else {
-      console.error('API request failed:', response.statusText);
-    }
-  } catch (error) {
-    console.error('Error sending API request:', error.message);
-  }
-}
-
-// Example usage
-const userPrompt = 'Translate: I love programming.'; // Replace with your request
-sendRequest(userPrompt);
+```python
+class ModelServiceConfig:
+    NATS_URL = "nats://localhost:4222"
+    MODEL_NAME = "tiiuae/falcon-40b-instruct"
+    MAX_GENERATION_LENGTH = 200
+    DO_SAMPLE = True
+    TOP_K = 10
+    NUM_RETURN_SEQUENCES = 1
+    EOS_TOKEN_ID = None
 ```
 
-## Shutting Down the Service
+## NATS Communication
 
-To shut down the Falcon 40B Instruct Model Service, simply terminate the Python script by pressing `Ctrl + C` in the terminal where the service is running.
+The Model Service communicates with the API Server and other components using the NATS messaging system. It subscribes to the "user_requests" subject to receive user prompts and publishes generated responses to the appropriate reply subject.
+
+```python
+# Handling incoming messages via NATS
+async def message_handler(msg):
+    subject = msg.subject
+    reply = msg.reply
+    data = msg.data.decode()
+
+    print(f"Received a message on '{subject} {reply}': {data}")
+
+    # Generate a response using the Falcon 40B Instruct model
+    sequences = pipeline(data, max_length=ModelServiceConfig.MAX_GENERATION_LENGTH, do_sample=ModelServiceConfig.DO_SAMPLE, top_k=ModelServiceConfig.TOP_K, num_return_sequences=ModelServiceConfig.NUM_RETURN_SEQUENCES, eos_token_id=ModelServiceConfig.EOS_TOKEN_ID)
+    generated_text = sequences[0]['generated_text']
+
+    # Send the generated response back
+    await nc.publish(reply, generated_text.encode())
+```
+
+## Dependencies
+
+The Model Service relies on the following dependencies:
+- NATS for message queuing and communication.
+- Hugging Face Transformers for loading and using the Falcon 40B Instruct model.
+
+## Running the Model Service
+
+To run the Model Service, execute the `model_service/main.py` script. Make sure to configure the NATS server and ensure that the Falcon 40B Instruct model is available. The service will listen for incoming requests and generate responses accordingly.
+
+## Conclusion
+
+The Model Service plays a crucial role in the system by enabling interaction with the Falcon 40B Instruct model. This documentation serves as a reference for understanding its configuration, communication methods, and dependencies.
+
+For additional information on the overall system architecture and API Server, please refer to the respective documentation files.
