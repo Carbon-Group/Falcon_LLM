@@ -1,17 +1,20 @@
 import asyncio
 import nats.aio.client as nats
 from fastapi import FastAPI, Depends, HTTPException, Header
-from config.config import APIServerConfig  # Импорт конфигурации API сервера
+from dotenv import load_dotenv  # Добавьте эту строку
+
+# Загрузите переменные окружения из файла .env
+load_dotenv()
 
 app = FastAPI()
 
 # Задайте токен, который будет использоваться для аутентификации клиентов
-SECRET_TOKEN = APIServerConfig.SECRET_TOKEN
+SECRET_TOKEN = os.getenv("SECRET_TOKEN")  # Извлеките токен из переменных окружения
 
 # Инициализация соединения с NATS
 async def initialize_nats_connection():
     nc = nats.Client()
-    await nc.connect(APIServerConfig.NATS_URL)  # Используйте NATS_URL из конфигурации
+    await nc.connect(os.getenv("NATS_URL"))  # Извлеките адрес NATS из переменных окружения
     return nc
 
 # Зависимость для проверки Bearer token
@@ -33,4 +36,4 @@ async def process_request(request_body: dict, nc: nats.Client = Depends(initiali
 
 if __name__ == '__main__':
     import uvicorn
-    uvicorn.run(app, host=APIServerConfig.HOST, port=APIServerConfig.PORT)  # Используйте конфигурацию для запуска
+    uvicorn.run(app, host=os.getenv("API_HOST"), port=int(os.getenv("API_PORT")))  # Извлеките хост и порт из переменных окружения
