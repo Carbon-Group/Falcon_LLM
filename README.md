@@ -13,21 +13,45 @@
 ### Библиотеки:
 #### - Для клиента на JS: axios.
 #### - Для FastAPI: fastapi.
-#### - Для Falcon: asyncio, nats, json.
-
-
+#### - Для Falcon: asyncio, nats.
+#### Команда установки зависимостей:
+```bash
+python -m pip install -r requirements.txt
+```
 ## **Инструкция для использования локальной копии модели Falcon 40B**
 ### NATS
 #### - Позволяет надежно, быстро и гибко обмениваться сообщениями между API сервером и Falcon 40B.
-#### - Команда запуска.
-```
+#### Команда запуска:
+```bash
 docker run --network host -p 4222:4222 nats -js
 ```
 
 
 ### Falcon 40B
+#### Команда запуска модели:
+```bash
+python falcon.py
+```
+
 
 ### API сервер
+#### Команда запуска сервера:
+```bash
+python api_server.py
+```
 
 
 ### Клиент JS
+#### Установка зависимостей:
+```bash
+npm install axios
+```
+#### Для проверки подключения можно использовать клиента на Node JS
+```bash
+node client.js
+```
+
+### Разработчики: 
+```bash
+https://github.com/Carbon-Group
+```
