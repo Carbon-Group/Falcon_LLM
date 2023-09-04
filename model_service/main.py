@@ -4,13 +4,19 @@ from nats.errors import ConnectionClosedError
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import transformers
 import torch
-from config.config import ModelServiceConfig  # Импорт настроек
+import os
+
+# Чтение переменных окружения из .env файла
+from dotenv import load_dotenv
+load_dotenv()
+
+NATS_URL = os.getenv("NATS_URL")  # Получите значение из .env
 
 async def main():
-    nc = await nats.connect(ModelServiceConfig.NATS_URL)  # Использование настроек
+    nc = await nats.connect(NATS_URL)
 
     # Загружаем модель и токенизатор Falcon-40B Instruct
-    model = ModelServiceConfig.MODEL_NAME
+    model = os.getenv("MODEL_NAME")
     tokenizer = AutoTokenizer.from_pretrained(model)
     pipeline = transformers.pipeline(
         "text-generation",
@@ -29,7 +35,7 @@ async def main():
         print(f"Received a message on '{subject} {reply}': {data}")
 
         # Генерируем ответ с помощью модели Falcon-40B Instruct
-        sequences = pipeline(data, max_length=ModelServiceConfig.MAX_GENERATION_LENGTH, do_sample=ModelServiceConfig.DO_SAMPLE, top_k=ModelServiceConfig.TOP_K, num_return_sequences=ModelServiceConfig.NUM_RETURN_SEQUENCES, eos_token_id=ModelServiceConfig.EOS_TOKEN_ID)
+        sequences = pipeline(data, max_length=int(os.getenv("MAX_GENERATION_LENGTH")), do_sample=bool(os.getenv("DO_SAMPLE")), top_k=int(os.getenv("TOP_K")), num_return_sequences=int(os.getenv("NUM_RETURN_SEQUENCES")), eos_token_id=int(os.getenv("EOS_TOKEN_ID")))
         generated_text = sequences[0]['generated_text']
 
         # Отправляем сгенерированный ответ обратно
