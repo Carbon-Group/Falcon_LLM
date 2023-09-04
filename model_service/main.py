@@ -4,12 +4,13 @@ from nats.errors import ConnectionClosedError
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import transformers
 import torch
+from config.config import ModelServiceConfig  # Импорт настроек
 
 async def main():
-    nc = await nats.connect("nats://localhost:4222")
+    nc = await nats.connect(ModelServiceConfig.NATS_URL)  # Использование настроек
 
     # Загружаем модель и токенизатор Falcon-40B Instruct
-    model = "tiiuae/falcon-40b-instruct"
+    model = ModelServiceConfig.MODEL_NAME
     tokenizer = AutoTokenizer.from_pretrained(model)
     pipeline = transformers.pipeline(
         "text-generation",
@@ -28,7 +29,7 @@ async def main():
         print(f"Received a message on '{subject} {reply}': {data}")
 
         # Генерируем ответ с помощью модели Falcon-40B Instruct
-        sequences = pipeline(data, max_length=200, do_sample=True, top_k=10, num_return_sequences=1, eos_token_id=tokenizer.eos_token_id)
+        sequences = pipeline(data, max_length=ModelServiceConfig.MAX_GENERATION_LENGTH, do_sample=ModelServiceConfig.DO_SAMPLE, top_k=ModelServiceConfig.TOP_K, num_return_sequences=ModelServiceConfig.NUM_RETURN_SEQUENCES, eos_token_id=ModelServiceConfig.EOS_TOKEN_ID)
         generated_text = sequences[0]['generated_text']
 
         # Отправляем сгенерированный ответ обратно
