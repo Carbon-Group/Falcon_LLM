@@ -1,57 +1,59 @@
-# **Falcon_LLM**
+# Falcon_LLM
 
-## **Требования**: 
-#### - Linux 
-#### - Для использования LLM с Falcon-40B необходимо наличие GPU, так как LLM требует высокой графической производительности. Вам потребуется не менее 85-100 ГБ оперативной памяти для быстрого выполнения логического вывода с Falcon 40B.
+## **Requirements**:
+- Linux
+- To use LLM with Falcon-40B, a GPU is required, as LLM demands high graphical performance. You will need at least 85-100 GB of RAM for fast execution of logical inference with Falcon 40B.
+
 ### GPU:
-#### - 2x RTX 6000 Ada (не A6000 или RTX 6000)
-#### - 2x A6000 – более бюджетное
-### CPU:
-#### - 8 ядер.
-#### - Например Intel Core i9-11900K или аналогичный AMD Ryzen 9 5900X
+- 2x RTX 6000 Ada (not A6000 or RTX 6000)
+- 2x A6000 – a more budget-friendly option
 
-### Библиотеки:
-#### - Для клиента на JS: axios.
-#### - Для FastAPI: fastapi.
-#### - Для Falcon: asyncio, nats.
-#### Команда установки зависимостей:
+### CPU:
+- 8 cores.
+- For example, Intel Core i9-11900K or a similar AMD Ryzen 9 5900X.
+
+### Libraries:
+- For the JS client: axios.
+- For FastAPI: fastapi.
+- For Falcon: asyncio, nats.
+
+### Dependencies Installation:
 ```bash
 python -m pip install -r requirements.txt
 ```
-## **Инструкция для использования локальной копии модели Falcon 40B**
+
+## **Instructions for Using a Local Copy of the Falcon 40B Model**
+
 ### NATS
-#### - Позволяет надежно, быстро и гибко обмениваться сообщениями между API сервером и Falcon 40B.
-#### Команда запуска:
+- Enables reliable, fast, and flexible message exchange between the API server and Falcon 40B.
+- Command to start NATS:
 ```bash
 docker run --network host -p 4222:4222 nats -js
 ```
 
-
 ### Falcon 40B
-#### Команда запуска модели:
+- Command to start the model:
 ```bash
 python falcon.py
 ```
 
-
-### API сервер
-#### Команда запуска сервера:
+### API Server
+- Command to start the server:
 ```bash
 python api_server.py
 ```
 
-
-### Клиент JS
-#### Установка зависимостей:
+### JS Client
+- Dependency installation:
 ```bash
 npm install axios
 ```
-#### Для проверки подключения можно использовать клиента на Node JS
+- To check the connection, you can use the Node.js client:
 ```bash
 node client.js
 ```
 
-### Разработчики: 
+### Developers:
 ```bash
 https://github.com/Carbon-Group
 ```
