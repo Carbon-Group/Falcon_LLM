@@ -1,2 +1,0 @@
-transformers>=4.32.1
-nats-py>=2.3.1
